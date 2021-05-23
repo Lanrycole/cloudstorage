@@ -15,6 +15,7 @@ public class NoteService {
         this.noteMapper = noteMapper;
     }
 
+    //updates or adds note
     public void addOrUpdateNote(Note note){
         Note notes = noteMapper.getNoteById(note.getNoteid());
 
