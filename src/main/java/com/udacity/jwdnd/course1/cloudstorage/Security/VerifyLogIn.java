@@ -39,10 +39,10 @@ public class VerifyLogIn extends WebSecurityConfigurerAdapter {
                 .permitAll();
 
         http.formLogin()
-                .defaultSuccessUrl("/home", true);
+                .defaultSuccessUrl("/file", true);
 
         http.logout()
-                .logoutSuccessUrl("/login");
+                .logoutSuccessUrl("/login").permitAll();
     }
 
 

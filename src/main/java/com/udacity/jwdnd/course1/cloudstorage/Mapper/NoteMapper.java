@@ -21,6 +21,11 @@ public interface NoteMapper {
     @Select("Select * from NOTES WHERE userid = #{userid}")
     List<Note> getUserNotesById(Integer userid);
 
+    //gets list of notes that belongs to a specific user bases on userID
+    @Select("Select * from NOTES WHERE notetitle = #{name}")
+    Note getUserNotesByTitle(String  name);
+
+
     //Deletes notes based on notes ID
     @Delete("delete from NOTES where noteId = #{noteid}")
     void deleteNotebyId(Integer noteid);

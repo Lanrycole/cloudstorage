@@ -16,29 +16,35 @@ public class NoteService {
     }
 
     //updates or adds note
-    public void addOrUpdateNote(Note note){
+    public int addOrUpdateNote(Note note) {
         Note notes = noteMapper.getNoteById(note.getNoteid());
 
-        if(notes !=null){
+        if (notes != null) {
             notes.setNoteTitle(note.getNoteTitle());
             notes.setNoteDescription(note.getNoteDescription());
             notes.setUserid(note.getUserid());
             notes.setNoteid(note.getNoteid());
             noteMapper.updateNoteById(note);
-        }else{
-            notes = new Note(note.getNoteTitle(),note.getNoteDescription(), note.getUserid(), note.getNoteid() );
-            noteMapper.addNote(notes);
-        }
+        } else {
+            notes = new Note(note.getNoteTitle(), note.getNoteDescription(), note.getUserid(), note.getNoteid());
 
+        }
+        return noteMapper.addNote(notes);
     }
-    public Note getNote(Integer id){
+
+    public boolean isFileNoteAvailable(String notetitle) {
+        return noteMapper.getUserNotesByTitle(notetitle) == null;
+    }
+
+    public Note getNote(Integer id) {
         return noteMapper.getNoteById(id);
     }
 
-    public List<Note> getUserNotes(Integer id){
+    public List<Note> getUserNotes(Integer id) {
         return noteMapper.getUserNotesById(id);
     }
-    public void deleteNotes(Integer id){
+
+    public void deleteNotes(Integer id) {
         noteMapper.deleteNotebyId(id);
     }
 

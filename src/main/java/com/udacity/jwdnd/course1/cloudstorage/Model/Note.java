@@ -5,8 +5,6 @@ public class Note {
     private String noteDescription;
     private Integer userid;
     private Integer noteid;
-
-
     public Note() {
     }
 

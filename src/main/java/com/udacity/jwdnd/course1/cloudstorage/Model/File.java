@@ -1,22 +1,33 @@
 package com.udacity.jwdnd.course1.cloudstorage.Model;
 
-public class File {
+import java.util.Arrays;
 
+public class File {
+private  Integer fileId;
     private String filename;
     private String contenttype;
-    private String  filesize;
+    private Long  filesize;
     private Integer userid;
-    private String BLOB;
+    private byte[] filedata;
 
     public File() {
     }
 
-    public File(String filename, String contenttype, String filesize, Integer userid, String BLOB) {
+    public Integer getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(Integer fileId) {
+        this.fileId = fileId;
+    }
+
+    public File(Integer fileId, String filename, String contenttype, Long filesize, Integer userid, byte[] filedata) {
+        this.fileId = fileId;
         this.filename = filename;
         this.contenttype = contenttype;
         this.filesize = filesize;
         this.userid = userid;
-        this.BLOB = BLOB;
+        this.filedata = filedata;
     }
 
     public String getFilename() {
@@ -35,11 +46,11 @@ public class File {
         this.contenttype = contenttype;
     }
 
-    public String getFilesize() {
+    public Long getFilesize() {
         return filesize;
     }
 
-    public void setFilesize(String filesize) {
+    public void setFilesize(Long filesize) {
         this.filesize = filesize;
     }
 
@@ -51,12 +62,26 @@ public class File {
         this.userid = userid;
     }
 
-    public String getBLOB() {
-        return BLOB;
+    public byte[] getFileData() {
+        return filedata;
     }
 
-    public void setBLOB(String BLOB) {
-        this.BLOB = BLOB;
+    public void setFileData(byte[] fileData) {
+        this.filedata = fileData;
     }
 
+    @Override
+    public String toString() {
+        return "File{" +
+                "fileId=" + fileId +
+                ", filename='" + filename + '\'' +
+                ", contenttype='" + contenttype + '\'' +
+                ", filesize=" + filesize +
+                ", userid=" + userid +
+                ", fileData=" + Arrays.toString(filedata) +
+                '}';
+    }
 }
+
+
+

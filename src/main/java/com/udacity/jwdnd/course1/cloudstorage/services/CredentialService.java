@@ -31,6 +31,9 @@ public class CredentialService {
             credential.setCredentialId(userCredential.getCredentialId());
             credential.setUrl(userCredential.getUrl());
             credential.setUsername(userCredential.getUsername());
+//            String decryptedPassword = encryptionService.decryptValue(credential.getPassword(), credential.getKey());
+//            System.out.println("Setting decrypted password: " +decryptedPassword);
+
             credential.setPassword(userCredential.getPassword());
             credential.setUserid(userCredential.getUserid());
             credential.setCredentialId(userCredential.getCredentialId());
@@ -42,8 +45,6 @@ public class CredentialService {
             random.nextBytes(key);
             String encodedKey = Base64.getEncoder().encodeToString(key);
             String encryptedPassword = encryptionService.encryptValue(userCredential.getPassword(), encodedKey);
-            System.out.println("Printing encoded Key: " + encodedKey);
-            System.out.println("Printing encoded password: " + encryptedPassword);
 
             credential = new Credentials(userCredential.getUrl(), userCredential.getUsername(),
                     encryptedPassword, userCredential.getUserid(), userCredential.getCredentialId(), encodedKey);
@@ -59,19 +60,17 @@ public class CredentialService {
     public List<Credentials> getListOfCredential(Integer userId) {
 
         List<Credentials> val = credentialMapper.getListOfCredentials(userId);
-        List<Credentials> values = new ArrayList<>();
+        List<Credentials> listOfCredentials = new ArrayList<>();
         val.forEach(credentials -> {
 
             if (credentials != null) {
                 String decryptedPassword = encryptionService.decryptValue(credentials.getPassword(), credentials.getKey());
-                System.out.println("Decrypted password" + decryptedPassword);
-                credentials.setPassword(decryptedPassword);
-                values.add(credentials);
+                 credentials.setPassword(decryptedPassword);
+                listOfCredentials.add(credentials);
             }
         });
-        System.out.println(values);
-
-        return values;
+ 
+        return listOfCredentials;
     }
 
     public void deleteCredential(Integer credentialId) {

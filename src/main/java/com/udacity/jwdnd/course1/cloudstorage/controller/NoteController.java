@@ -1,8 +1,11 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 
+import com.udacity.jwdnd.course1.cloudstorage.Model.File;
 import com.udacity.jwdnd.course1.cloudstorage.Model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.Model.User;
+import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
+import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.security.core.Authentication;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.nio.file.Files;
 import java.util.List;
 
 
@@ -20,6 +24,8 @@ import java.util.List;
 public class NoteController {
     NoteService noteService;
     UserService userService;
+    FileService fileService;
+    CredentialService credentialService;
     User user;
     Note note;
 
@@ -28,9 +34,11 @@ public class NoteController {
      * @param noteService
      * @param userService
      */
-    public NoteController(NoteService noteService, UserService userService) {
+    public NoteController(NoteService noteService, UserService userService,  FileService fileService, CredentialService credentialService) {
         this.noteService = noteService;
         this.userService = userService;
+        this.fileService =fileService;
+        this.credentialService = credentialService;
     }
 
     /**
@@ -45,8 +53,11 @@ public class NoteController {
         user = userService.getUser(authentication.getName());
         notes.setUserid(user.getUserId());
         noteService.addOrUpdateNote(notes);
-        List<Note> userNotes = this.noteService.getUserNotes(notes.getUserid());
-        model.addAttribute("usernotes", userNotes);
+
+        model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
+        model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
+        model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
+
         return "home";
     }
 
@@ -72,10 +83,9 @@ public class NoteController {
     public String deleteNote(@PathVariable("noteid") Integer noteid, Model model) {
          note = noteService.getNote(noteid);
         noteService.deleteNotes(note.getNoteid());
-        System.out.println(note.getNoteid());
-        List <Note> userNotes = this.noteService.getUserNotes(note.getUserid());
-        model.addAttribute("usernotes", userNotes);
-
+         model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
+        model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
+        model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
         return "home";
     }
 
@@ -86,8 +96,9 @@ public class NoteController {
      * @return
      */
     @GetMapping("/note")
-    public String renderNotes(Note note, Model model){
-        List <Note> userNotes = this.noteService.getUserNotes(note.getUserid());
+    public String renderNotes(Note note, Model model, Authentication authentication){
+        User user = userService.getUser(authentication.getName());
+        List <Note> userNotes = this.noteService.getUserNotes(user.getUserId());
         model.addAttribute("usernotes", userNotes);
         return "home";
     }

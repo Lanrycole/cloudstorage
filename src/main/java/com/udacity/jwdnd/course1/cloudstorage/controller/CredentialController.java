@@ -3,6 +3,8 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 import com.udacity.jwdnd.course1.cloudstorage.Model.Credentials;
 import com.udacity.jwdnd.course1.cloudstorage.Model.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
+import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
+import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -14,20 +16,27 @@ import java.util.List;
 
 @Controller
 public class CredentialController {
+
+    User user;
     CredentialService credentialService;
     UserService userService;
-    User user;
     Credentials credentials;
+    NoteService noteService;
+    FileService fileService;
+    public CredentialController(CredentialService credentialService, UserService userService, NoteService noteService, FileService fileService) {
+        this.credentialService = credentialService;
+        this.userService = userService;
+        this.noteService = noteService;
+        this.fileService = fileService;
+    }
+
+
 
     /**
      *
      * @param credentialService
      * @param userService
      */
-    public CredentialController(CredentialService credentialService, UserService userService) {
-        this.credentialService = credentialService;
-        this.userService = userService;
-    }
 
     /**
      *
@@ -40,8 +49,7 @@ public class CredentialController {
     public String getCredentials(Credentials credential, Model model) {
 
         List<Credentials> listOfUserCredentials = this.credentialService.getListOfCredential(credential.getUserid());
-        System.out.println("Printing list of credentials");
-        model.addAttribute("userCredentials", listOfUserCredentials);
+         model.addAttribute("userCredentials", listOfUserCredentials);
         return "home";
     }
 
@@ -56,12 +64,12 @@ public class CredentialController {
     @PostMapping("/credential")
     public String addCredential(Authentication authentication, Credentials credential, Model model) {
         user = userService.getUser(authentication.getName());
-
         credential.setUserid(user.getUserId());
         credentialService.addOrUpdateCredentials(credential);
-        List<Credentials> listOfUserCredentials = this.credentialService.getListOfCredential(credential.getUserid());
 
-        model.addAttribute("userCredentials", listOfUserCredentials);
+        model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
+        model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
+        model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
 
         return "home";
     }
@@ -78,8 +86,9 @@ public class CredentialController {
     public String deleteCredential(@PathVariable("credentialid") Integer credentialId, Model model) {
         credentials = credentialService.getCredential(credentialId);
         credentialService.deleteCredential(credentials.getCredentialId());
-        List<Credentials> listOfUserCredentials = this.credentialService.getListOfCredential(credentials.getUserid());
-        model.addAttribute("userCredentials", listOfUserCredentials);
+        model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
+        model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
+        model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
         return "home";
 
 
