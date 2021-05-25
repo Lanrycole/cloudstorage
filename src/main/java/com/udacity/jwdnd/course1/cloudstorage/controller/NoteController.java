@@ -29,40 +29,51 @@ public class NoteController {
     User user;
     Note note;
 
+    String uploadStatus = null;
+
     /**
-     *
      * @param noteService
      * @param userService
      */
-    public NoteController(NoteService noteService, UserService userService,  FileService fileService, CredentialService credentialService) {
+    public NoteController(NoteService noteService, UserService userService, FileService fileService, CredentialService credentialService) {
         this.noteService = noteService;
         this.userService = userService;
-        this.fileService =fileService;
+        this.fileService = fileService;
         this.credentialService = credentialService;
     }
 
     /**
-     *
      * @param authentication
      * @param notes
      * @param model
      * @return
      */
-    @PostMapping("/note")
+    @PostMapping("/add-note")
     public String addNote(Authentication authentication, Note notes, Model model) {
         user = userService.getUser(authentication.getName());
         notes.setUserid(user.getUserId());
-        noteService.addOrUpdateNote(notes);
 
-        model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
-        model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
-        model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
+        int rowsAdded = noteService.addOrUpdateNote(notes);
+        if (rowsAdded <= 0) {
+            model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
+            model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
+            model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
+            model.addAttribute("uploadStatus", "error");
+            model.addAttribute("uploadMessage", "Error Adding File");
 
-        return "home";
+        } else {
+            model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
+            model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
+            model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
+            model.addAttribute("uploadStatus", "success");
+            model.addAttribute("uploadMessage", "Success");
+        }
+
+
+        return "result";
     }
 
     /**
-     *
      * @param id
      * @param model
      * @return
@@ -74,31 +85,30 @@ public class NoteController {
     }
 
     /**
-     *
      * @param noteid
      * @param model
      * @return
      */
     @GetMapping("/deletenote/{noteid}")
     public String deleteNote(@PathVariable("noteid") Integer noteid, Model model) {
-         note = noteService.getNote(noteid);
+        note = noteService.getNote(noteid);
         noteService.deleteNotes(note.getNoteid());
-         model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
+        model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
         model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
         model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
         return "home";
     }
 
     /**
-     *
      * @param note
      * @param model
      * @return
      */
-    @GetMapping("/note")
-    public String renderNotes(Note note, Model model, Authentication authentication){
+    @GetMapping("/add-note")
+    public String renderNotes(Note note, Model model, Authentication authentication) {
         User user = userService.getUser(authentication.getName());
-        List <Note> userNotes = this.noteService.getUserNotes(user.getUserId());
+        List<Note> userNotes = this.noteService.getUserNotes(user.getUserId());
+        System.out.println("Hitting render Note from GET");
         model.addAttribute("usernotes", userNotes);
         return "home";
     }

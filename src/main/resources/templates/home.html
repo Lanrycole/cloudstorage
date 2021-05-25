@@ -42,7 +42,7 @@
                             </div>
                         </form>
                         <div class="table-responsive">
-                            <p  style="margin:10px; color: red"  th:text="${uploadError}">File name already exist</p>
+
 
                             <table class="table table-striped" id="fileTable">
                                 <thead>
@@ -54,7 +54,7 @@
                                 <tbody>
                                 <tr th:each="file : ${files}">
                                     <td>
-<!--                                -->
+
                                         <a target="_blank" class="btn btn-success"  th:href="@{'/download-file/'+${file.fileId}}" download>View</a>
                                         <a  class="btn btn-danger" th:href="@{/delete-file/{fileId}(fileId=${file.fileId})}"> Delete</a>
                                     </td>
@@ -70,7 +70,6 @@
                         </button>
 
                         <div class="table-responsive">
-                            <p  style="margin:10px; color: red"  th:text="${noteError}">Note name already exist</p>
 
                             <table class="table table-striped" id="userTable">
                                 <thead>
@@ -104,7 +103,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST" th:action="@{/note}">
+                                        <form action="#" method="POST" th:action="@{/add-note}">
                                             <input type="hidden" name="noteid" id="note-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Title</label>
@@ -118,8 +117,8 @@
                                         </form>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onclick="$('#noteSubmit').click();">Save changes</button>
+                                        <a type="button" class="btn btn-secondary" data-dismiss="modal">Close</a>
+                                        <button type="button" class="btn btn-primary" th:href="@{/add-note}" onclick="$('#noteSubmit').click();">Save changes</button>
                                     </div>
                                 </div>
                             </div>
@@ -213,6 +212,8 @@
             //     $('#note-description').val(noteDescription ? noteDescription : '');
             //     $('#noteModal').modal('show');
             // }
+
+
 
             // For opening the credentials modal
             function showCredentialModal(id) {

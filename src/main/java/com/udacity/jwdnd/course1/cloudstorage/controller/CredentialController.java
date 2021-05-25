@@ -23,13 +23,13 @@ public class CredentialController {
     Credentials credentials;
     NoteService noteService;
     FileService fileService;
+
     public CredentialController(CredentialService credentialService, UserService userService, NoteService noteService, FileService fileService) {
         this.credentialService = credentialService;
         this.userService = userService;
         this.noteService = noteService;
         this.fileService = fileService;
     }
-
 
 
     /**
@@ -39,7 +39,6 @@ public class CredentialController {
      */
 
     /**
-     *
      * @param credential
      * @param model
      * @return
@@ -49,12 +48,11 @@ public class CredentialController {
     public String getCredentials(Credentials credential, Model model) {
 
         List<Credentials> listOfUserCredentials = this.credentialService.getListOfCredential(credential.getUserid());
-         model.addAttribute("userCredentials", listOfUserCredentials);
-        return "home";
+        model.addAttribute("userCredentials", listOfUserCredentials);
+        return "result";
     }
 
     /**
-     *
      * @param authentication
      * @param credential
      * @param model
@@ -65,13 +63,25 @@ public class CredentialController {
     public String addCredential(Authentication authentication, Credentials credential, Model model) {
         user = userService.getUser(authentication.getName());
         credential.setUserid(user.getUserId());
-        credentialService.addOrUpdateCredentials(credential);
 
-        model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
-        model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
-        model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
 
-        return "home";
+        int rowsAdded = credentialService.addOrUpdateCredentials(credential);
+        if(rowsAdded<= 0){
+            model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
+            model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
+            model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
+            model.addAttribute("uploadStatus", "error");
+            model.addAttribute("uploadMessage", "Error adding credential");
+        }else{
+            model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
+            model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
+            model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
+            model.addAttribute("uploadStatus", "success");
+            model.addAttribute("uploadMessage", "Success");
+        }
+
+
+        return "result";
     }
 
 

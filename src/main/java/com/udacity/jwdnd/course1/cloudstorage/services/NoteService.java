@@ -27,9 +27,9 @@ public class NoteService {
             noteMapper.updateNoteById(note);
         } else {
             notes = new Note(note.getNoteTitle(), note.getNoteDescription(), note.getUserid(), note.getNoteid());
-
+            noteMapper.addNote(notes);
         }
-        return noteMapper.addNote(notes);
+        return 1;
     }
 
     public boolean isFileNoteAvailable(String notetitle) {

@@ -23,10 +23,10 @@ public class CredentialService {
         this.encryptionService = encryptionService;
     }
 
-    public void addOrUpdateCredentials(Credentials userCredential) {
+    public int addOrUpdateCredentials(Credentials userCredential) {
         Credentials credential = credentialMapper.
                 getCredentialById(userCredential.getCredentialId());
-        System.out.println(credential);
+
         if (credential != null) {
             credential.setCredentialId(userCredential.getCredentialId());
             credential.setUrl(userCredential.getUrl());
@@ -50,6 +50,7 @@ public class CredentialService {
                     encryptedPassword, userCredential.getUserid(), userCredential.getCredentialId(), encodedKey);
             credentialMapper.addCredential(credential);
         }
+        return  1;
     }
 
 
@@ -76,4 +77,9 @@ public class CredentialService {
     public void deleteCredential(Integer credentialId) {
         credentialMapper.deleteCredentialById(credentialId);
     }
+
+    public boolean isCredentialAvailable(String username, int userId) {
+        return credentialMapper.getCredentialByName(username, userId) == null;
+    }
+
 }
