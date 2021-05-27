@@ -32,9 +32,6 @@ public class NoteService {
         return 1;
     }
 
-    public boolean isFileNoteAvailable(String notetitle) {
-        return noteMapper.getUserNotesByTitle(notetitle) == null;
-    }
 
     public Note getNote(Integer id) {
         return noteMapper.getNoteById(id);

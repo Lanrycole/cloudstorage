@@ -78,8 +78,6 @@ public class CredentialService {
         credentialMapper.deleteCredentialById(credentialId);
     }
 
-    public boolean isCredentialAvailable(String username, int userId) {
-        return credentialMapper.getCredentialByName(username, userId) == null;
-    }
+
 
 }

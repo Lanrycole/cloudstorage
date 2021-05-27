@@ -22,8 +22,8 @@ public interface NoteMapper {
     List<Note> getUserNotesById(Integer userid);
 
     //gets list of notes that belongs to a specific user bases on userID
-    @Select("Select * from NOTES WHERE notetitle = #{name}")
-    Note getUserNotesByTitle(String  name);
+    @Select("Select * from NOTES WHERE notetitle = #{name} and userid= #{userid}")
+    Note getUserNotesByTitle(String  name, int userid);
 
 
     //Deletes notes based on notes ID
