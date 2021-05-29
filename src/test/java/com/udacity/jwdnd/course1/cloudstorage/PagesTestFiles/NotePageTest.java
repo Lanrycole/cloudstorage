@@ -45,11 +45,21 @@ public class NotePageTest {
     @FindBy(id = "note-description")
     private WebElement noteDescription;
 
+    /**
+     *
+     * @param driver
+     */
     public NotePageTest(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
     }
 
+    /**
+     *
+     * @param noteTitle
+     * @param noteDescription
+     * @throws InterruptedException
+     */
     public void addNote(String noteTitle, String noteDescription) throws InterruptedException {
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", this.notesTab);
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", this.addNote);
@@ -65,12 +75,23 @@ public class NotePageTest {
         Thread.sleep(2000);
     }
 
+    /**
+     *
+     * @return note title
+     */
     public String getNoteTitle() {
         Note note = new Note();
         note.setNoteTitle(notesTitleText.getText());
         return note.getNoteTitle();
     }
 
+    /**
+     *
+     * @param newNote
+     * @param newDescription
+     * @returnnote tittle;
+     * @throws InterruptedException
+     */
     public String EditNote(String newNote, String newDescription)
             throws InterruptedException {
         Note note = new Note();
@@ -83,6 +104,9 @@ public class NotePageTest {
         return note.getNoteTitle();
     }
 
+    /**
+     * Deletes note
+     */
     public void deleteNote() {
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", this.notesTab);
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", this.deleteNote);

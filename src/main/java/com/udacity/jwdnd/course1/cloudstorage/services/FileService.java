@@ -12,11 +12,19 @@ import java.util.List;
 public class FileService {
     FileMapper fileMapper;
 
-
+    /**
+     * @param fileMapper
+     */
     public FileService(FileMapper fileMapper) {
         this.fileMapper = fileMapper;
     }
 
+    /**
+     * @param file
+     * @param userId
+     * @return
+     * @throws IOException Saving new file
+     */
     public int saveFile(MultipartFile file, Integer userId) throws IOException {
         Files newFile = new Files();
 
@@ -31,26 +39,41 @@ public class FileService {
         return fileMapper.saveFile(newFile);
     }
 
-    public void viewFile(Integer fileId) {
-        Files file = fileMapper.getFileById(fileId);
 
-        if (file != null) {
-            fileMapper.getUserFilesById(fileId);
-        } else {
-            throw new IllegalStateException("FIle not found");
-        }
-
-    }
-public Files getFileById(Integer fileid){
+    /**
+     * @param fileid
+     * @return File Object
+     * <p>
+     * Getting file by ID
+     */
+    public Files getFileById(Integer fileid) {
         return fileMapper.getFileById(fileid);
-}
+    }
+
+    /**
+     *
+     * @param fileId
+     *
+     * Deleting file bu ID
+     */
     public void deleteFile(Integer fileId) {
         fileMapper.deleteFileById(fileId);
     }
-
+    /**
+     *
+     * @param userId
+     * @return List of Files
+     */
     public List<Files> getUserFilesById(Integer userId) {
         return fileMapper.getUserFilesById(userId);
     }
+
+    /**
+     *
+     * @param username
+     * @param userId
+     * @return file if it exists
+     */
     public boolean isFileNameAvailable(String username, int userId) {
         return fileMapper.getFileByName(username, userId) == null;
     }

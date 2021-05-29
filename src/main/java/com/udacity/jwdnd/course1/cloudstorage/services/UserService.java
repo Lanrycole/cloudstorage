@@ -16,7 +16,6 @@ public class UserService {
     private final HashService hashService;
 
     /**
-     *
      * @param userMapper
      * @param hashService
      */
@@ -26,18 +25,16 @@ public class UserService {
     }
 
     /**
-     *
      * @param username
-     * @return
+     * @return user
      */
     public boolean isUsernameAvailable(String username) {
         return userMapper.getUser(username) == null;
     }
 
     /**
-     *
      * @param user
-     * @return
+     * @return new created user
      */
     public int createUser(User user) {
         SecureRandom random = new SecureRandom();
@@ -51,21 +48,11 @@ public class UserService {
     }
 
     /**
-     *
      * @param username
-     * @return
+     * @return user retrieved by username
      */
     public User getUser(String username) {
-
         return userMapper.getUser(username);
     }
 
-    /**
-     *
-     * @return
-     */
-    public List<User> getAllUsers(){
-
-        return userMapper.getAllUsers();
-    }
 }

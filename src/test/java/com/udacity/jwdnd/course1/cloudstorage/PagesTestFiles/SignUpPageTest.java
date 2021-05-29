@@ -22,10 +22,22 @@ public class SignUpPageTest {
     @FindBy(css = "#signup-button")
     private WebElement submitButton;
 
+    /**
+     *
+     * @param webDriver
+     */
+
     public SignUpPageTest(WebDriver webDriver) {
         PageFactory.initElements(webDriver, this);
     }
 
+    /**
+     *
+     * @param firstName
+     * @param lastName
+     * @param username
+     * @param password
+     */
     public void testSignUp(String firstName, String lastName,
                        String username, String password) {
         this.firstNameField.sendKeys(firstName);

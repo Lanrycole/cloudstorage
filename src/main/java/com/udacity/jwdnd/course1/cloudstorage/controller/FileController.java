@@ -27,12 +27,24 @@ public class FileController {
     NoteService noteService;
     CredentialService credentialService;
 
+    /**
+     * @param fileService
+     * @param userService
+     * @param noteService
+     * @param credentialService
+     */
     public FileController(FileService fileService, UserService userService, NoteService noteService, CredentialService credentialService) {
         this.fileService = fileService;
         this.userService = userService;
         this.noteService = noteService;
         this.credentialService = credentialService;
     }
+
+    /**
+     * @param model
+     * @param authentication
+     * @return Retrieving data from the database when /home gets a request
+     */
 
     @GetMapping("/home")
     public String renderFilePage(Model model, Authentication authentication) {
@@ -44,6 +56,13 @@ public class FileController {
         return "home";
     }
 
+    /**
+     * @param file
+     * @param model
+     * @param authentication
+     * @return
+     * @throws IOException uploading file
+     */
     @PostMapping("/upload-file")
     public String uploadFile(@RequestParam("fileUpload")
                                      MultipartFile[] file, Model model, Authentication authentication) throws IOException {
@@ -51,12 +70,10 @@ public class FileController {
 
         User user = userService.getUser(authentication.getName());
 
-
         for (MultipartFile multipartFile : file) {
 
-            System.out.println(multipartFile);
-
-            if (multipartFile.getBytes().length <1) {
+            //setting data retrieved from multipart to the UI
+            if (multipartFile.getBytes().length < 1) {
                 model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
                 model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
                 model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
@@ -109,6 +126,15 @@ public class FileController {
         return "result";
     }
 
+    /**
+     *
+     * @param fileId
+     * @return home
+     *
+     * Downloading file
+     */
+
+
     @GetMapping("/download-file/{fileId}")
     public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable Integer fileId) {
         Files file = fileService.getFileById(fileId);
@@ -119,6 +145,14 @@ public class FileController {
 
     }
 
+    /**
+     *
+     * @param fileid
+     * @param model
+     * @param authentication
+     * @return
+     * Deleting File
+     */
     @GetMapping("/delete-file/{fileid}")
     public String deleteNote(@PathVariable Integer fileid, Model model, Authentication authentication) {
         User user = userService.getUser(authentication.getName());
