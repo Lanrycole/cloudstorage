@@ -31,6 +31,8 @@ class CloudStorageApplicationTests {
     //variables to data for testing.
     public static WebDriver driver;
     public String baseURL;
+
+    //Please replace file URL with yours
     File file = new File("/Users/lanre/Desktop/test.txt");
     String filePath = file.getPath();
     String firstName = "lanre";
