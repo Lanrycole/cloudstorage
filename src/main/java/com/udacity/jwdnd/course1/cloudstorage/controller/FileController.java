@@ -34,7 +34,7 @@ public class FileController {
         this.credentialService = credentialService;
     }
 
-    @GetMapping("/file")
+    @GetMapping("/home")
     public String renderFilePage(Model model, Authentication authentication) {
         User user = userService.getUser(authentication.getName());
         model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
@@ -47,52 +47,64 @@ public class FileController {
     @PostMapping("/upload-file")
     public String uploadFile(@RequestParam("fileUpload")
                                      MultipartFile[] file, Model model, Authentication authentication) throws IOException {
-        String uploadStatus = null;
+        boolean fileExists = false;
 
         User user = userService.getUser(authentication.getName());
 
-            for (MultipartFile multipartFile : file) {
 
-                if (!fileService.isFileNameAvailable(multipartFile.getOriginalFilename(), user.getUserId()) ) {
-                    uploadStatus = "Files name exist.";
+        for (MultipartFile multipartFile : file) {
+
+            System.out.println(multipartFile);
+
+            if (multipartFile.getBytes().length <1) {
+                model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
+                model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
+                model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
+                model.addAttribute("uploadStatus", "error");
+                model.addAttribute("uploadMessage", "Please choose a file");
+
+            }
+
+            if (!fileService.isFileNameAvailable(multipartFile.getOriginalFilename(), user.getUserId())) {
+                fileExists = true;
+                model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
+                model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
+                model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
+                model.addAttribute("uploadStatus", "fileexists");
+                model.addAttribute("uploadMessage", "Files Exists");
+            }
+
+
+            if (!fileExists) {
+                int rowsAdded = fileService.saveFile(multipartFile, user.getUserId());
+                if (rowsAdded < 0) {
+
                     model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
                     model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
                     model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
-                    model.addAttribute("uploadStatus", "fileexists");
-                    model.addAttribute("uploadMessage", "Files Exists");
-                }
+                    model.addAttribute("uploadStatus", "error");
+                    model.addAttribute("uploadMessage", "Error Adding Files");
+                } else {
 
-
-                if (uploadStatus == null) {
-                    int rowsAdded = fileService.saveFile(multipartFile, user.getUserId());
-                    if (rowsAdded < 0) {
-
-                        model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
-                        model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
-                        model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
-                        model.addAttribute("uploadStatus", "error");
-                        model.addAttribute("uploadMessage", "Error Adding Files");
-                    } else {
-
-                        model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
-                        model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
-                        model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
-                        model.addAttribute("uploadStatus", "success");
-                        model.addAttribute("uploadMessage", "Success");
-                    }
-                }
-
-                if (uploadStatus == null) {
-
-                    model.addAttribute("uploadSuccess", uploadStatus);
                     model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
                     model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
                     model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
                     model.addAttribute("uploadStatus", "success");
                     model.addAttribute("uploadMessage", "Success");
                 }
-
             }
+
+            if (!fileExists) {
+
+                model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
+                model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
+                model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
+                model.addAttribute("uploadStatus", "success");
+                model.addAttribute("uploadMessage", "Success");
+            }
+
+
+        }
 
         return "result";
     }

@@ -67,7 +67,6 @@ public class NoteController {
             model.addAttribute("uploadMessage", "Success");
         }
 
-
         return "result";
     }
 

@@ -13,7 +13,7 @@
             <h1 class="display-5">Login</h1>
             <form action="#" method="POST" th:action="@{/login}">
                 <div class="alert alert-danger" th:if="${param.error}"  >
-                    <span th:text=" 'Invalid username or password'"> Invalid username or password</span>
+                    <span th:text=" 'Invalid username or password'" id="invalid-login"> Invalid username or password</span>
 
                 </div>
                 <div class="alert alert-dark">

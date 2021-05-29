@@ -15,7 +15,7 @@ import java.util.List;
 //@RequestMapping("/home")
 public class HomeController {
 
-    @GetMapping("/home")
+    @GetMapping("/")
     public String renderHomePage() {
         return "home";
     }
