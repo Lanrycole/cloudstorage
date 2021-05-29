@@ -81,7 +81,12 @@ class CloudStorageApplicationTests {
      * 4. Testing logging out.
      */
     @Test
-    void TestAuthentication() {
+    void TestAuthenticationAndUserActionFlow() throws InterruptedException {
+
+        //Only signed in user can access homePage
+        driver.get(baseURL + "/home");
+        assertEquals(baseURL + "/login", driver.getCurrentUrl());
+
 
         //test signing up
         driver.get(baseURL + "/signup");
@@ -102,78 +107,19 @@ class CloudStorageApplicationTests {
         logInPage.login(username, password);
         assertEquals(baseURL + "/home", driver.getCurrentUrl());
 
-        //Logging out
+        //Logging out and making sure a logged out user cannot access home page
         logInPage.logout();
+        driver.get(baseURL + "/home");
         assertEquals(baseURL + "/login", driver.getCurrentUrl());
-        assertEquals("Login", driver.getTitle());
 
-    }
-
-    /**
-     * @throws InterruptedException Testing Credentials
-     *                              1. Testing user adding credentials
-     *                              2.Testing updating added Credentials
-     *                              3. Testing deleting credentials
-     */
-    @Test
-    void TestAddCredentials() throws InterruptedException {
-
-        driver.get(baseURL + "/signup");
-
-        //Instantiating SignUpTest that holds testing methods
-        SignUpPageTest signup = new SignUpPageTest(driver);
-        signup.testSignUp(firstName, lastName, username, password);
-        //Logging in
-        LogInPageTest logInPage = new LogInPageTest(driver);
+        //Logging user back in
         driver.get(baseURL + "/login");
         logInPage.login(username, password);
-
-        //Instantiating CredentialPageTest that holds testing methods
-        CredentialPageTest credentialPageTest = new CredentialPageTest(driver);
-        //Adding a new Credential
-        credentialPageTest.addCredentials(url, username, password);
-        assertEquals(username, credentialPageTest.getCredentialUsername());
-        assertEquals(password, credentialPageTest.getCredentialPassword());
-
-        //Updating Credential
-        Credentials updatedCredential = credentialPageTest.EditCredentials("www.yahoo.com",
-                "new Username", "newpassword");
-        assertEquals("new Username", updatedCredential.getUsername());
-        assertEquals("www.yahoo.com", updatedCredential.getUrl());
-        //Deleting Credential
-        driver.get(baseURL + "/login");
-        logInPage.login(username, password);
-        credentialPageTest.deleteCredentials();
-        assertThrows(NoSuchElementException.class, credentialPageTest::getCredentialUsername);
-
-    }
-
-    /**
-     * @throws InterruptedException Testing Credentials
-     *                              1. Testing user adding Notes
-     *                              2.Testing updating added Notes
-     *                              3. Testing deleting Notes
-     */
-    @Test
-    void TestNoteFlow() throws InterruptedException {
-        //Instantiating SignUpTest that holds testing methods
-        driver.get(baseURL + "/signup");
-        SignUpPageTest signup = new SignUpPageTest(driver);
-        signup.testSignUp(firstName, lastName, username, password);
-        LogInPageTest logInPage = new LogInPageTest(driver);
-
-        //Logging in
-        driver.get(baseURL + "/login");
-        logInPage.login(username, password);
-        assertEquals(baseURL + "/home", driver.getCurrentUrl());
-
-        //Instantiating NotePageTest that holds testing methods
 
         NotePageTest notePageTest = new NotePageTest(driver);
-        driver.get(baseURL + "/home");
+
 
         //Adding a new Note
-
         notePageTest.addNote(noteTitle, noteDescription);
         assertEquals(noteTitle, notePageTest.getNoteTitle());
 
@@ -189,5 +135,33 @@ class CloudStorageApplicationTests {
         notePageTest.deleteNote();
         assertThrows(NoSuchElementException.class, notePageTest::getNoteTitle);
 
+
+//        Testing Credentials
+//        1. Testing user adding credentials
+//        2.Testing updating added Credentials
+//        3. Testing deleting credentials
+        driver.get(baseURL + "/login");
+        logInPage.login(username, password);
+        CredentialPageTest credentialPageTest = new CredentialPageTest(driver);
+
+        //Adding a new Credential
+        credentialPageTest.addCredentials(url, username, password);
+        assertEquals(username, credentialPageTest.getCredentialUsername());
+        assertEquals(password, credentialPageTest.getCredentialPassword());
+
+        //Updating Credential
+        Credentials updatedCredential = credentialPageTest.EditCredentials("www.yahoo.com",
+                "new Username", "newpassword");
+        assertEquals("new Username", updatedCredential.getUsername());
+        assertEquals("www.yahoo.com", updatedCredential.getUrl());
+
+        //Deleting Credentials
+        credentialPageTest.deleteCredentials();
+        assertThrows(NoSuchElementException.class, credentialPageTest::getCredentialUsername);
+
     }
+
+
+
+
 }
