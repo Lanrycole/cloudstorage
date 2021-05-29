@@ -1,7 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 
-import com.udacity.jwdnd.course1.cloudstorage.Model.File;
 import com.udacity.jwdnd.course1.cloudstorage.Model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.Model.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.nio.file.Files;
 import java.util.List;
 
 
@@ -59,7 +57,7 @@ public class NoteController {
             model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
             model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
             model.addAttribute("uploadStatus", "error");
-            model.addAttribute("uploadMessage", "Error Adding File");
+            model.addAttribute("uploadMessage", "Error Adding Files");
 
         } else {
             model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
@@ -68,7 +66,6 @@ public class NoteController {
             model.addAttribute("uploadStatus", "success");
             model.addAttribute("uploadMessage", "Success");
         }
-
 
         return "result";
     }

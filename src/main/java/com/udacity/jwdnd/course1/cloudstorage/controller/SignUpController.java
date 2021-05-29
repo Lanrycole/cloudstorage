@@ -24,6 +24,13 @@ public class SignUpController {
         return "signup";
 
     }
+
+    /**
+     *
+     * @param user
+     * @param model
+     * @return
+     */
     @PostMapping()
     public String signupUser(@ModelAttribute User user, Model model) {
         String signupError = null;

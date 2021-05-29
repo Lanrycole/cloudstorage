@@ -24,6 +24,14 @@ public class CredentialController {
     NoteService noteService;
     FileService fileService;
 
+    /**
+     *
+     * @param credentialService
+     * @param userService
+     * @param noteService
+     * @param fileService
+     */
+
     public CredentialController(CredentialService credentialService, UserService userService, NoteService noteService, FileService fileService) {
         this.credentialService = credentialService;
         this.userService = userService;
@@ -59,20 +67,30 @@ public class CredentialController {
      * @return
      */
 
+    /**
+     * @param authentication
+     * @param credential
+     * @param model
+     * @return
+     *
+     * Sends credential from the front end to controller
+     */
     @PostMapping("/credential")
     public String addCredential(Authentication authentication, Credentials credential, Model model) {
         user = userService.getUser(authentication.getName());
         credential.setUserid(user.getUserId());
 
-
+        //Adding credentials
         int rowsAdded = credentialService.addOrUpdateCredentials(credential);
-        if(rowsAdded<= 0){
+
+        //Sending all data back to the UI regardless if a new credential is added
+        if (rowsAdded <= 0) {
             model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
             model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
             model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
             model.addAttribute("uploadStatus", "error");
             model.addAttribute("uploadMessage", "Error adding credential");
-        }else{
+        } else {
             model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
             model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
             model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
@@ -80,18 +98,32 @@ public class CredentialController {
             model.addAttribute("uploadMessage", "Success");
         }
 
-
         return "result";
     }
 
-
+    /**
+     *
+     * @param id
+     * @param model
+     * @return
+     *
+     * Gets credential by ID
+     */
     @GetMapping("/credential/{credentialid}")
     @ResponseBody
     public Credentials getCredential(@PathVariable("credentialid") String id, Model model) {
         return this.credentialService.getCredential(Integer.parseInt(id));
     }
 
-
+    /**
+     *
+     * @param credentialId
+     * @param model
+     * @return homepage
+     *
+     *
+     * this method deletes credential based on credential ID
+     */
     @GetMapping("/deletecredential/{credentialid}")
     public String deleteCredential(@PathVariable("credentialid") Integer credentialId, Model model) {
         credentials = credentialService.getCredential(credentialId);
