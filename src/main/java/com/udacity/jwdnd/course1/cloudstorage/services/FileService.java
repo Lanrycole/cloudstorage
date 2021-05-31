@@ -33,7 +33,7 @@ public class FileService {
         newFile.setFilename(fileName);
         newFile.setContenttype(file.getContentType());
         newFile.setFilesize(file.getSize());
-        newFile.setFileData(file.getBytes());
+        newFile.setFiledata(file.getBytes());
         newFile.setUserid(userId);
 
         return fileMapper.saveFile(newFile);

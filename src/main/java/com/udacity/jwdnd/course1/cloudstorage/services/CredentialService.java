@@ -17,7 +17,6 @@ public class CredentialService {
     private final EncryptionService encryptionService;
 
     /**
-     *
      * @param credentialMapper
      * @param hashingService
      * @param encryptionService
@@ -30,48 +29,36 @@ public class CredentialService {
     }
 
     /**
-     *
      * @param userCredential
      * @return new credential
      */
 
     public int addOrUpdateCredentials(Credentials userCredential) {
-        Credentials credential = credentialMapper.
-                getCredentialById(userCredential.getCredentialId());
+        Credentials credential = credentialMapper.getCredentialById(userCredential.getCredentialId());
+
         //Updating existing credential if it exists
         if (credential != null) {
-            credential.setCredentialId(userCredential.getCredentialId());
             credential.setUrl(userCredential.getUrl());
-            credential.setUsername(userCredential.getUsername());
-
             credential.setPassword(userCredential.getPassword());
+            credential.setUsername(userCredential.getUsername());
             credential.setUserid(userCredential.getUserid());
             credential.setCredentialId(userCredential.getCredentialId());
 
             credentialMapper.updateCredential(credential);
         } else {
 
-            //Enccoding password and sending it to the database
-            SecureRandom random = new SecureRandom();
-            byte[] key = new byte[16];
-            random.nextBytes(key);
-            String encodedKey = Base64.getEncoder().encodeToString(key);
-            String encryptedPassword = encryptionService.encryptValue(userCredential.getPassword(), encodedKey);
-
-            credential = new Credentials(userCredential.getUrl(), userCredential.getUsername(),
-                    encryptedPassword, userCredential.getUserid(), userCredential.getCredentialId(), encodedKey);
+            credential = new Credentials(userCredential.getCredentialId(), userCredential.getUrl(),
+                    userCredential.getUsername(), userCredential.getPassword(), userCredential.getKey(), userCredential.getUserid());
             //Adding new credential
+
             credentialMapper.addCredential(credential);
         }
-        return  1;
+        return 1;
     }
 
     /**
-     *
      * @param credentialId
-     * @return
-     *
-     * Gets credential by Id
+     * @return Gets credential by Id
      */
 
     public Credentials getCredential(Integer credentialId) {
@@ -79,38 +66,34 @@ public class CredentialService {
     }
 
     /**
-     *
      * @param userId
      * @return Credentials
-     *
+     * <p>
      * Gets list of credential of by user ID
      */
     public List<Credentials> getListOfCredential(Integer userId) {
-
-        List<Credentials> val = credentialMapper.getListOfCredentials(userId);
         List<Credentials> listOfCredentials = new ArrayList<>();
-        val.forEach(credentials -> {
+        if (userId != null) {
+            List<Credentials> val = credentialMapper.getListOfCredentials(userId);
 
-            if (credentials != null) {
-                String decryptedPassword = encryptionService.decryptValue(credentials.getPassword(), credentials.getKey());
-                 credentials.setPassword(decryptedPassword);
-                listOfCredentials.add(credentials);
-            }
-        });
- 
+            val.forEach(credentials -> {
+                if (credentials != null) {
+                    String decryptedPassword = encryptionService.decryptValue(credentials.getPassword(), credentials.getKey());
+                    credentials.setPassword(decryptedPassword);
+                    listOfCredentials.add(credentials);
+                }
+            });
+        }
+
         return listOfCredentials;
     }
 
     /**
-     *
-     * @param credentialId
-     *
-     * Deletes credential by Credential ID
+     * @param credentialId Deletes credential by Credential ID
      */
     public void deleteCredential(Integer credentialId) {
         credentialMapper.deleteCredentialById(credentialId);
     }
-
 
 
 }
