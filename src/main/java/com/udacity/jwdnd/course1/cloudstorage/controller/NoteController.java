@@ -17,6 +17,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
+//TODO
+//        We should create custom error page in case of invalid URL inputs.- Fixed
+//        We should redirect the user to login page after signup and display success message on login page.-- Fixed
+//        We should display success message after delete operation for all the functionalities.-- Fixed
+//        We should create custom error page after bigger file size is uploaded.--Fixed
+//        We should resolve the failing test cases. --Fixed
+//        We should display password in encrypted format on the dashboard and in pop up it should be decrypted.
 
 @Controller
 public class NoteController {
@@ -88,12 +95,25 @@ public class NoteController {
      */
     @GetMapping("/deletenote/{noteid}")
     public String deleteNote(@PathVariable("noteid") Integer noteid, Model model) {
-        note = noteService.getNote(noteid);
-        noteService.deleteNotes(note.getNoteid());
-        model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
-        model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
-        model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
-        return "home";
+        if (noteid != null) {
+
+            note = noteService.getNote(noteid);
+
+            if(note !=null){
+                noteService.deleteNotes(note.getNoteid());
+                model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
+                model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
+                model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
+                model.addAttribute("uploadStatus", "success");
+                model.addAttribute("uploadMessage", "Note Deleted");
+            }else{
+                model.addAttribute("uploadStatus", "error");
+                model.addAttribute("uploadMessage", "Note Not Found ");
+            }
+
+
+        }
+        return "result";
     }
 
     /**
@@ -105,7 +125,7 @@ public class NoteController {
     public String renderNotes(Note note, Model model, Authentication authentication) {
         User user = userService.getUser(authentication.getName());
         List<Note> userNotes = this.noteService.getUserNotes(user.getUserId());
-        System.out.println("Hitting render Note from GET");
+
         model.addAttribute("usernotes", userNotes);
         return "home";
     }

@@ -1,11 +1,13 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
+import com.udacity.jwdnd.course1.cloudstorage.Model.Credentials;
 import com.udacity.jwdnd.course1.cloudstorage.Model.Files;
 import com.udacity.jwdnd.course1.cloudstorage.Model.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,9 +16,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.naming.SizeLimitExceededException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 
 
 @Controller
@@ -65,51 +74,46 @@ public class FileController {
      */
     @PostMapping("/upload-file")
     public String uploadFile(@RequestParam("fileUpload")
-                                     MultipartFile[] file, Model model, Authentication authentication) throws IOException {
+                                     MultipartFile file, Model model, Authentication authentication) throws IOException {
         boolean fileExists = false;
 
         User user = userService.getUser(authentication.getName());
 
-        for (MultipartFile multipartFile : file) {
 
-            //setting data retrieved from multipart to the UI
-            if (multipartFile.getBytes().length < 1) {
+        System.out.println("Printing file size: " + file.getSize());
+
+
+        //setting data retrieved from multipart to the UI
+
+
+        if (!fileService.isFileNameAvailable(file.getOriginalFilename(), user.getUserId())) {
+            fileExists = true;
+            model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
+            model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
+            model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
+            model.addAttribute("uploadStatus", "fileexists");
+            model.addAttribute("uploadMessage", "Files Exists");
+        }
+
+
+        if (!fileExists) {
+            int rowsAdded = fileService.saveFile(file, user.getUserId());
+            if (rowsAdded < 0) {
+
                 model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
                 model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
                 model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
                 model.addAttribute("uploadStatus", "error");
-                model.addAttribute("uploadMessage", "Please choose a file");
+                model.addAttribute("uploadMessage", "Error Adding Files");
+            } else {
 
-            }
-
-            if (!fileService.isFileNameAvailable(multipartFile.getOriginalFilename(), user.getUserId())) {
-                fileExists = true;
                 model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
                 model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
                 model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
-                model.addAttribute("uploadStatus", "fileexists");
-                model.addAttribute("uploadMessage", "Files Exists");
+                model.addAttribute("uploadStatus", "success");
+                model.addAttribute("uploadMessage", "Success");
             }
 
-
-            if (!fileExists) {
-                int rowsAdded = fileService.saveFile(multipartFile, user.getUserId());
-                if (rowsAdded < 0) {
-
-                    model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
-                    model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
-                    model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
-                    model.addAttribute("uploadStatus", "error");
-                    model.addAttribute("uploadMessage", "Error Adding Files");
-                } else {
-
-                    model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
-                    model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
-                    model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
-                    model.addAttribute("uploadStatus", "success");
-                    model.addAttribute("uploadMessage", "Success");
-                }
-            }
 
             if (!fileExists) {
 
@@ -120,17 +124,19 @@ public class FileController {
                 model.addAttribute("uploadMessage", "Success");
             }
 
-
+        } else {
+            model.addAttribute("uploadStatus", "error");
+            model.addAttribute("uploadMessage", "File too large");
         }
+
 
         return "result";
     }
 
     /**
-     *
      * @param fileId
      * @return home
-     *
+     * <p>
      * Downloading file
      */
 
@@ -141,17 +147,15 @@ public class FileController {
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(file.getContenttype()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment:filename=\" " + file.getFilename() + "\"")
-                .body(new ByteArrayResource(file.getFileData()));
+                .body(new ByteArrayResource(file.getFiledata()));
 
     }
 
     /**
-     *
      * @param fileid
      * @param model
      * @param authentication
-     * @return
-     * Deleting File
+     * @return Deleting File
      */
     @GetMapping("/delete-file/{fileid}")
     public String deleteNote(@PathVariable Integer fileid, Model model, Authentication authentication) {
@@ -161,8 +165,9 @@ public class FileController {
         model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
         model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
         model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
-        return "home";
+        model.addAttribute("uploadStatus", "success");
+        model.addAttribute("uploadMessage", "File Deleted");
+        return "result";
     }
-
 
 }

@@ -29,3 +29,4 @@ public class HashService {
         return Base64.getEncoder().encodeToString(hashedValue);
     }
 }
+
