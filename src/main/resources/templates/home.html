@@ -240,12 +240,16 @@
 
     // For opening the credentials modal
     function showCredentialModal(id) {
+        $('#credential-id').val(null);
+        $('#credential-url').val(null);
+        $('#credential-username').val(null);
+        $('#credential-password').val(null);
+
         if (id !== undefined) {
             $(document).ready(function () {
                 $.ajax({
                     url: "http://localhost:8080/credential/" + id
                 }).then(function (data) {
-                    console.log(data)
                     $('#credential-id').val(data.credentialId);
                     $('#credential-url').val(data.url);
                     $('#credential-username').val(data.username);
@@ -253,6 +257,7 @@
                     $('#credentialModal').modal('show');
                 });
             });
+
         }
         $('#credentialModal').modal('show');
     }
@@ -263,7 +268,6 @@
                 $.ajax({
                     url: "http://localhost:8080/getNote/" + id
                 }).then(function (data) {
-                    console.log(data)
                     $('#note-id').val(data.noteid);
                     $('#note-title').val(data.noteTitle);
                     $('#note-description').val(data.noteDescription);
@@ -282,7 +286,7 @@
             if (fileInput.get(0).files.length) {
                 var fileSize = fileInput.get(0).files[0].size; // in bytes
                 if (fileSize > maxSize) {
-                    alert("File too large");
+                    alert("File too large. 5MB is the maximum allowed size");
                     return false;
                 }
             }

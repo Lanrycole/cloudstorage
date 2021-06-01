@@ -81,7 +81,6 @@ public class FileController {
 
         //setting data retrieved from multipart to the UI
 
-
         if (!fileService.isFileNameAvailable(file.getOriginalFilename(), user.getUserId())) {
             fileExists = true;
             model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
@@ -112,8 +111,10 @@ public class FileController {
             }
 
         } else {
-            model.addAttribute("uploadStatus", "error");
-            model.addAttribute("uploadMessage", "File Exists");
+ 
+            model.addAttribute("uploadStatus", "fileexists");
+            model.addAttribute("uploadMessage", "Files Exists");
+ 
         }
 
 

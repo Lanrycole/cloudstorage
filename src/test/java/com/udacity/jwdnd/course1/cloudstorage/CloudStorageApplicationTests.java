@@ -110,6 +110,9 @@ class CloudStorageApplicationTests {
 
         NotePageTest notePageTest = new NotePageTest(driver);
 
+ 
+        logInPage.login(username, password);
+ 
         //Adding a new Note
         notePageTest.addNote(noteTitle, noteDescription);
         assertEquals(noteTitle, notePageTest.getNoteTitle());
