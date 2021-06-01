@@ -84,7 +84,7 @@ public class CredentialPageTest {
         credentials.setPassword(passwordText.getText());
         credentials.setUsername(usernameText.getText());
 
-        return credentials.getUsername();
+        return credentials.getPassword();
     }
 
     public Credentials EditCredentials(String newUrl, String newUserName, String newPassword) throws InterruptedException {

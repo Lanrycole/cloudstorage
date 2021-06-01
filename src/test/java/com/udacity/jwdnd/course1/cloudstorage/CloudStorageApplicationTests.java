@@ -10,9 +10,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.FindBy;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
@@ -31,14 +29,10 @@ class CloudStorageApplicationTests {
     //variables to data for testing.
     public static WebDriver driver;
     public String baseURL;
-
-    //Please replace file URL with yours
-    File file = new File("/Users/lanre/Desktop/test.txt");
-    String filePath = file.getPath();
-    String firstName = "lanre";
-    String lastName = "Ore";
-    String username = "lanre";
-    String password = "lanre";
+    String firstName = "firstname";
+    String lastName = "lastname";
+    String username = "username";
+    String password = "password";
     String url = "www.google.com";
     String noteTitle = "Title";
     String noteDescription = "Description";
@@ -54,7 +48,6 @@ class CloudStorageApplicationTests {
     public void beforeEach() {
         driver = new ChromeDriver();
         baseURL = baseURL = "http://localhost:" + port;
-
 
     }
 
@@ -100,7 +93,7 @@ class CloudStorageApplicationTests {
         LogInPageTest logInPage = new LogInPageTest(driver);
 
         //Logging in with the wrong credentials
-        logInPage.login(username + "s", password + "S");
+        logInPage.login("invalidUsername", "invalidPassword");
         assertEquals(baseURL + "/login?error", driver.getCurrentUrl());
 
         //Logging in with the correct credentials
@@ -109,15 +102,13 @@ class CloudStorageApplicationTests {
 
         //Logging out and making sure a logged out user cannot access home page
         logInPage.logout();
-        driver.get(baseURL + "/home");
         assertEquals(baseURL + "/login", driver.getCurrentUrl());
 
         //Logging user back in
-        driver.get(baseURL + "/login");
+//        driver.get(baseURL + "/login");
         logInPage.login(username, password);
 
         NotePageTest notePageTest = new NotePageTest(driver);
-
 
         //Adding a new Note
         notePageTest.addNote(noteTitle, noteDescription);
@@ -131,6 +122,7 @@ class CloudStorageApplicationTests {
 
         driver.get(baseURL + "/login");
         logInPage.login(username, password);
+
 //        deletingNotes
         notePageTest.deleteNote();
         assertThrows(NoSuchElementException.class, notePageTest::getNoteTitle);
