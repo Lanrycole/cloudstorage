@@ -59,10 +59,12 @@ public class CredentialController {
 
     @GetMapping("/credential")
     public String getCredentials(Credentials credential, Model model) {
-        Credentials credentials = credentialService.getCredential(credential.getCredentialId());
+        Credentials cred = credentialService.getCredential(credential.getCredentialId());
 
-        if (credentials != null) {
-            List<Credentials> listOfUserCredentials = this.credentialService.getListOfCredential(credential.getUserid());
+        if (cred != null) {
+            List<Credentials> listOfUserCredentials =
+                    this.credentialService.getListOfCredential(credential.getUserid());
+
             model.addAttribute("userCredentials", listOfUserCredentials);
         }
 
@@ -88,16 +90,16 @@ public class CredentialController {
         user = userService.getUser(authentication.getName());
         credential.setUserid(user.getUserId());
 
-
-        SecureRandom random = new SecureRandom();
-        byte[] key = new byte[16];
-        random.nextBytes(key);
-        String encodedKey = Base64.getEncoder().encodeToString(key);
-
-        String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), encodedKey);
-        credential.setPassword(encryptedPassword);
-        credential.setKey(encodedKey);
-        //Adding credentials
+//
+//        SecureRandom random = new SecureRandom();
+//        byte[] key = new byte[16];
+//        random.nextBytes(key);
+//        String encodedKey = Base64.getEncoder().encodeToString(key);
+//
+//        String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), encodedKey);
+//        credential.setPassword(encryptedPassword);
+//        credential.setKey(encodedKey);
+//        //Adding credentials
         int rowsAdded = credentialService.addOrUpdateCredentials(credential);
 
         //Sending all data back to the UI regardless if a new credential is added
@@ -127,14 +129,7 @@ public class CredentialController {
     @ResponseBody
     public Credentials getCredential(@PathVariable("credentialid") String id, Model model) {
 
-        Credentials newCre = this.credentialService.getCredential(Integer.parseInt(id));
-        if (newCre != null) {
-            newCre.setPassword(this.encryptionService.decryptValue(newCre.getPassword(), newCre.getKey()));
-
-        }
-
-        return newCre;
-
+        return this.credentialService.getCredential(Integer.parseInt(id));
     }
 
     /**

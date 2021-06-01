@@ -35,20 +35,29 @@ public class CredentialService {
 
     public int addOrUpdateCredentials(Credentials userCredential) {
         Credentials credential = credentialMapper.getCredentialById(userCredential.getCredentialId());
-
-        //Updating existing credential if it exists
+         //Updating existing credential if it exists
         if (credential != null) {
+
+            String encryptedPassword = encryptionService.encryptValue(userCredential.getPassword(), credential.getKey());
             credential.setUrl(userCredential.getUrl());
-            credential.setPassword(userCredential.getPassword());
+            credential.setPassword(encryptedPassword);
             credential.setUsername(userCredential.getUsername());
             credential.setUserid(userCredential.getUserid());
             credential.setCredentialId(userCredential.getCredentialId());
-
+            credential.setKey(credential.getKey());
             credentialMapper.updateCredential(credential);
+
+
         } else {
+            SecureRandom random = new SecureRandom();
+            byte[] key = new byte[16];
+            random.nextBytes(key);
+            String encodedKey = Base64.getEncoder().encodeToString(key);
+
+            String encryptedPassword = encryptionService.encryptValue(userCredential.getPassword(), encodedKey);
 
             credential = new Credentials(userCredential.getCredentialId(), userCredential.getUrl(),
-                    userCredential.getUsername(), userCredential.getPassword(), userCredential.getKey(), userCredential.getUserid());
+                    userCredential.getUsername(), encryptedPassword, encodedKey, userCredential.getUserid());
             //Adding new credential
 
             credentialMapper.addCredential(credential);
@@ -62,7 +71,19 @@ public class CredentialService {
      */
 
     public Credentials getCredential(Integer credentialId) {
-        return credentialMapper.getCredentialById(credentialId);
+
+        Credentials newCre = credentialMapper.getCredentialById(credentialId);
+
+        Credentials cre = new Credentials();
+
+        cre.setUrl(newCre.getUrl());
+        cre.setUsername(newCre.getUsername());
+        cre.setPassword(encryptionService.decryptValue(newCre.getPassword(), newCre.getKey()));
+        cre.setUserid(newCre.getUserid());
+        cre.setCredentialId(newCre.getCredentialId());
+        cre.setKey(newCre.getKey());
+
+        return cre;
     }
 
     /**
@@ -72,26 +93,23 @@ public class CredentialService {
      * Gets list of credential of by user ID
      */
     public List<Credentials> getListOfCredential(Integer userId) {
-        List<Credentials> listOfCredentials = new ArrayList<>();
-        if (userId != null) {
-            List<Credentials> val = credentialMapper.getListOfCredentials(userId);
 
-            val.forEach(credentials -> {
-                if (credentials != null) {
-                    String decryptedPassword = encryptionService.decryptValue(credentials.getPassword(), credentials.getKey());
-                    credentials.setPassword(decryptedPassword);
-                    listOfCredentials.add(credentials);
-                }
-            });
-        }
+        List<Credentials> newCre = credentialMapper.getListOfCredentials(userId);
+        List<Credentials> cre = new ArrayList<>();
+        newCre.forEach(credentials ->
+        {
+             credentials.setPassword(encryptionService.decryptValue(credentials.getPassword(), credentials.getKey()));
+            cre.add(credentials);
 
-        return listOfCredentials;
+        });
+         return cre;
     }
 
     /**
      * @param credentialId Deletes credential by Credential ID
      */
     public void deleteCredential(Integer credentialId) {
+
         credentialMapper.deleteCredentialById(credentialId);
     }
 
