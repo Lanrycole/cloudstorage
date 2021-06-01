@@ -79,20 +79,15 @@ public class FileController {
 
         User user = userService.getUser(authentication.getName());
 
-
-        System.out.println("Printing file size: " + file.getSize());
-
-
         //setting data retrieved from multipart to the UI
 
 
         if (!fileService.isFileNameAvailable(file.getOriginalFilename(), user.getUserId())) {
             fileExists = true;
-            model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
-            model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
             model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
             model.addAttribute("uploadStatus", "fileexists");
             model.addAttribute("uploadMessage", "Files Exists");
+
         }
 
 
@@ -100,15 +95,10 @@ public class FileController {
             int rowsAdded = fileService.saveFile(file, user.getUserId());
             if (rowsAdded < 0) {
 
-                model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
-                model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
                 model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
                 model.addAttribute("uploadStatus", "error");
                 model.addAttribute("uploadMessage", "Error Adding Files");
             } else {
-
-                model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
-                model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
                 model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
                 model.addAttribute("uploadStatus", "success");
                 model.addAttribute("uploadMessage", "Success");
@@ -116,9 +106,6 @@ public class FileController {
 
 
             if (!fileExists) {
-
-                model.addAttribute("usernotes", noteService.getUserNotes(user.getUserId()));
-                model.addAttribute("files", fileService.getUserFilesById(user.getUserId()));
                 model.addAttribute("userCredentials", credentialService.getListOfCredential(user.getUserId()));
                 model.addAttribute("uploadStatus", "success");
                 model.addAttribute("uploadMessage", "Success");
@@ -126,7 +113,7 @@ public class FileController {
 
         } else {
             model.addAttribute("uploadStatus", "error");
-            model.addAttribute("uploadMessage", "File too large");
+            model.addAttribute("uploadMessage", "File Exists");
         }
 
 
