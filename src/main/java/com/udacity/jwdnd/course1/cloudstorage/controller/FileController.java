@@ -79,12 +79,7 @@ public class FileController {
 
         User user = userService.getUser(authentication.getName());
 
-
-        System.out.println("Printing file size: " + file.getSize());
-
-
         //setting data retrieved from multipart to the UI
-
 
         if (!fileService.isFileNameAvailable(file.getOriginalFilename(), user.getUserId())) {
             fileExists = true;
@@ -125,8 +120,8 @@ public class FileController {
             }
 
         } else {
-            model.addAttribute("uploadStatus", "error");
-            model.addAttribute("uploadMessage", "File too large");
+            model.addAttribute("uploadStatus", "fileexists");
+            model.addAttribute("uploadMessage", "Files Exists");
         }
 
 
