@@ -1,11 +1,14 @@
 package com.udacity.jwdnd.course1.cloudstorage.PagesTestFiles;
 
 import com.udacity.jwdnd.course1.cloudstorage.Model.Note;
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class NotePageTest {
 
@@ -72,15 +75,16 @@ public class NotePageTest {
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", this.saveNote);
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", this.returnToPage);
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", this.notesTab);
-        Thread.sleep(2000);
+        Thread.sleep(2200);
     }
 
     /**
      *
      * @return note title
      */
-    public String getNoteTitle() {
+    public String getNoteTitle() throws InterruptedException {
         Note note = new Note();
+        Thread.sleep(2200);
         note.setNoteTitle(notesTitleText.getText());
         return note.getNoteTitle();
     }
@@ -91,16 +95,18 @@ public class NotePageTest {
      * @param newDescription
      * @returnnote tittle;
      * @throws InterruptedException
+     *
      */
-    public String EditNote(String newNote, String newDescription)
+    public String editNote(String newNote, String newDescription)
             throws InterruptedException {
         Note note = new Note();
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", this.editNote);
         note.setNoteTitle(newNote);
         note.setNoteDescription(newDescription);
+
         ((JavascriptExecutor) driver).executeScript("arguments[0].value='" + newNote + "';", this.noteTitle);
         ((JavascriptExecutor) driver).executeScript("arguments[0].value='" + newDescription + "';", this.noteDescription);
-        Thread.sleep(2000);
+        Thread.sleep(2200);
         return note.getNoteTitle();
     }
 

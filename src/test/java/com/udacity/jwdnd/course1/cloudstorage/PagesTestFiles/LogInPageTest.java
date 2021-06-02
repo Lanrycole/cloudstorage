@@ -5,6 +5,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class LogInPageTest {
@@ -21,6 +22,8 @@ public class LogInPageTest {
 
     @FindBy(css = "#logout")
     private WebElement logoutButton;
+
+    Authentication authentication;
 
     /**
      *

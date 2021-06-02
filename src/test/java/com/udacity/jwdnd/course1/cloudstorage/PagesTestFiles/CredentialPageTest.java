@@ -66,24 +66,27 @@ public class CredentialPageTest {
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", this.submitCredentials);
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", this.returnToPage);
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", this.credentialTab);
-        Thread.sleep(2000);
+        Thread.sleep(2200);
 
     }
 
 
-    public String getCredentialUsername() {
+    public String getCredentialUsername() throws InterruptedException {
 
         Credentials credentials = new Credentials();
         credentials.setUsername(usernameText.getText());
+        Thread.sleep(2200);
+
         return credentials.getUsername();
     }
-   public String getCredentialPassword() {
+
+    public String getCredentialPassword() throws InterruptedException {
 
         Credentials credentials = new Credentials();
         credentials.setUrl(urlText.getText());
         credentials.setPassword(passwordText.getText());
         credentials.setUsername(usernameText.getText());
-
+        Thread.sleep(2200);
         return credentials.getPassword();
     }
 
@@ -99,7 +102,7 @@ public class CredentialPageTest {
         credentials.setUrl(newUrl);
         credentials.setPassword(newPassword);
         credentials.setUsername(newUserName);
-        Thread.sleep(2000);
+        Thread.sleep(2200);
         return credentials;
     }
 
