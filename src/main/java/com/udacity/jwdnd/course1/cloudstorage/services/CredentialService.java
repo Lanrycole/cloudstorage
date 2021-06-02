@@ -43,6 +43,7 @@ public class CredentialService {
             credential.setUsername(userCredential.getUsername());
             credential.setUserid(userCredential.getUserid());
             credential.setCredentialId(userCredential.getCredentialId());
+            credential.setKey(userCredential.getKey());
 
             credentialMapper.updateCredential(credential);
         } else {
