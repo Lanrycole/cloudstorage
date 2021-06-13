@@ -58,7 +58,7 @@ public class TestNote {
     }
 
     //Addding notes
-    @Test
+//    @Test
     public void addNote() throws InterruptedException {
         driver.get(baseURL + "/signup");
         SignUpPageTest signup = new SignUpPageTest(driver);
@@ -78,7 +78,7 @@ public class TestNote {
     }
 
     //Editing notes
-    @Test
+//    @Test
     public void editNote() throws InterruptedException {
 
         LogInPageTest logInPage = new LogInPageTest(driver);
@@ -93,7 +93,7 @@ public class TestNote {
     }
 
     //deleting notes
-    @Test
+//    @Test
     public void deleteNote() {
 
         LogInPageTest logInPage = new LogInPageTest(driver);

@@ -58,7 +58,7 @@ public class TestCredential {
     }
 
     //Adding credentials
-    @Test
+//    @Test
     public void addCredentials() throws InterruptedException {
         driver.get(baseURL + "/signup");
         SignUpPageTest signup = new SignUpPageTest(driver);
@@ -77,7 +77,7 @@ public class TestCredential {
     }
 
     //Editing credentials
-    @Test
+//    @Test
     public void editCredentials() throws InterruptedException {
 
         LogInPageTest logInPage = new LogInPageTest(driver);
@@ -92,7 +92,7 @@ public class TestCredential {
     }
 
     //Deleting credentials
-    @Test
+//    @Test
     public void deleteCredential() {
         LogInPageTest logInPage = new LogInPageTest(driver);
         driver.get(baseURL + "/login");
