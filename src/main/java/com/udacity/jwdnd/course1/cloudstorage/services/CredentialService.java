@@ -39,17 +39,25 @@ public class CredentialService {
         //Updating existing credential if it exists
         if (credential != null) {
             credential.setUrl(userCredential.getUrl());
-            credential.setPassword(userCredential.getPassword());
+            credential.setKey(userCredential.getKey());
+            credential.setPassword(encryptionService.decryptValue(userCredential.getPassword(), credential.getKey()));
             credential.setUsername(userCredential.getUsername());
             credential.setUserid(userCredential.getUserid());
             credential.setCredentialId(userCredential.getCredentialId());
-            credential.setKey(userCredential.getKey());
+
 
             credentialMapper.updateCredential(credential);
         } else {
 
+            SecureRandom random = new SecureRandom();
+            byte[] key = new byte[16];
+            random.nextBytes(key);
+            String encodedKey = Base64.getEncoder().encodeToString(key);
+            String encryptedPassword = encryptionService.encryptValue(userCredential.getPassword(), encodedKey);
+
+
             credential = new Credentials(userCredential.getCredentialId(), userCredential.getUrl(),
-                    userCredential.getUsername(), userCredential.getPassword(), userCredential.getKey(), userCredential.getUserid());
+                    userCredential.getUsername(), encryptedPassword, encodedKey, userCredential.getUserid());
             //Adding new credential
 
             credentialMapper.addCredential(credential);

@@ -90,15 +90,6 @@ public class CredentialController {
         user = userService.getUser(authentication.getName());
         credential.setUserid(user.getUserId());
 
-//
-//        SecureRandom random = new SecureRandom();
-//        byte[] key = new byte[16];
-//        random.nextBytes(key);
-//        String encodedKey = Base64.getEncoder().encodeToString(key);
-//
-//        String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), encodedKey);
-//        credential.setPassword(encryptedPassword);
-//        credential.setKey(encodedKey);
 //        //Adding credentials
         int rowsAdded = credentialService.addOrUpdateCredentials(credential);
 
@@ -150,8 +141,6 @@ public class CredentialController {
         model.addAttribute("uploadStatus", "success");
         model.addAttribute("uploadMessage", "Credential deleted");
         return "result";
-
-
     }
 
 
