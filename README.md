@@ -1,4 +1,4 @@
-# Super Drive Cloud Storage
+# EazyBooks Online Library
 
 1. **Simple File Storage:** Upload/download/remove files
 2. **Note Management:** Add/update/remove text notes
@@ -31,7 +31,7 @@ The back-end is all about security and connecting the front-end to database data
 
 
 ### The Front-End
-The front end is developers using HTML, CSS, Boostrap and JQuery. The HTMl contain form fields, modal forms, success and error message elements, as well as styling and functional components. It also used a Thymeleaf attributes to supply the back-end data and functionality described by the following individual page requirements:
+The front end is developed using Vue JS. The HTMl contain form fields, modal forms, success and error message elements, as well as styling and functional components. It also used a Thymeleaf attributes to supply the back-end data and functionality described by the following individual page requirements:
 
 1. Login page
  - Everyone should be allowed access to this page, and users can use this page to login to the application. 
