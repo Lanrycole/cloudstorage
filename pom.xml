@@ -11,7 +11,7 @@
     <groupId>com.eazybooks</groupId>
     <artifactId>eazybooks</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>cloudstorage</name>
+    <name>eazybooks</name>
     <description>Online Book library</description>
 
     <properties>
